@@ -1,0 +1,73 @@
+import { TimeBoundUndertakingItem } from '@/types';
+
+export const INITIAL_UNDERTAKINGS: TimeBoundUndertakingItem[] = [
+  {
+    id: 'UND-SRO-001',
+    applicationId: 'APP-SRO-1092',
+    applicationNumber: 'APP/2026-27/SRO-1092',
+    institutionPermanentId: '1-109723412',
+    institutionName: 'Sri Krishna College of Technology',
+    region: 'Southern',
+    category: 'LAB_EQUIPMENT',
+    conditionTitle: 'High-Performance GPU AI/ML Cluster Setup',
+    prescribedCondition: 'Commission dedicated server laboratory with minimum 8x NVIDIA A100 / RTX 6000 Ada GPU workstations with licensed development suites.',
+    imposedDate: '2026-08-15',
+    dueDate: '2026-11-15',
+    status: 'SUBMITTED_PENDING_VERIFICATION',
+    evidenceDocumentName: 'GPU_Procurement_Invoices_GeoTagged_Photos.pdf',
+    evidenceDocumentUrl: '/docs/undertakings/SKCT_GPU_Proof_2026.pdf',
+    submittedAt: '2026-10-20',
+    escalationLevel: 'LEVEL_0_NORMAL'
+  },
+  {
+    id: 'UND-WRO-002',
+    applicationId: 'APP-WRO-2041',
+    applicationNumber: 'APP/2026-27/WRO-2041',
+    institutionPermanentId: '1-209384911',
+    institutionName: 'Pune Institute of Computer Technology',
+    region: 'Western',
+    category: 'FACULTY_CADRE_RATIO',
+    conditionTitle: 'Ph.D. Cadre Ratio Compliance in Computer Engineering',
+    prescribedCondition: 'Recruit 3 regular Cadre Professors with Ph.D. qualifications via open selection committee to meet 1:15 cadre ratio norms.',
+    imposedDate: '2026-06-01',
+    dueDate: '2026-10-31',
+    status: 'PENDING_SUBMISSION',
+    escalationLevel: 'LEVEL_1_RO'
+  },
+  {
+    id: 'UND-NRO-003',
+    applicationId: 'APP-NRO-3310',
+    applicationNumber: 'APP/2026-27/NRO-3310',
+    institutionPermanentId: '1-3324512341',
+    institutionName: 'Apex Institute of Technology & Engineering',
+    region: 'Northern',
+    category: 'ACCESSIBILITY_RPWD',
+    conditionTitle: 'Barrier-Free Campus Infrastructure for RPwD Persons',
+    prescribedCondition: 'Install wheelchair accessible ramp with tactile paving, audible braille lift, and dedicated disabled washroom facilities in academic block.',
+    imposedDate: '2026-05-10',
+    dueDate: '2026-10-10',
+    status: 'OVERDUE_ESCALATED',
+    escalationLevel: 'LEVEL_2_BUREAU'
+  },
+  {
+    id: 'UND-ERO-004',
+    applicationId: 'APP-ERO-4105',
+    applicationNumber: 'APP/2026-27/ERO-4105',
+    institutionPermanentId: '1-419823019',
+    institutionName: 'Kalinga Institute of Industrial Technology',
+    region: 'Eastern',
+    category: 'ENDOWMENT_FUND',
+    conditionTitle: 'Joint Fixed Deposit Receipt (FDR) Deposit with AICTE',
+    prescribedCondition: 'Deposit Rs. 100 Lakhs in nationalized bank in joint account with Member Secretary, AICTE as security deposit for 10 years.',
+    imposedDate: '2026-04-10',
+    dueDate: '2026-07-10',
+    status: 'VERIFIED_COMPLIANT',
+    evidenceDocumentName: 'SBI_Joint_FDR_Receipt_CounterSigned.pdf',
+    evidenceDocumentUrl: '/docs/undertakings/KIIT_Joint_FDR.pdf',
+    submittedAt: '2026-06-25',
+    verifiedAt: '2026-07-02',
+    verifiedBy: 'Dr. Ramesh Unnikrishnan (Adviser AB)',
+    verificationRemarks: 'Original FDR lien certified by State Bank of India. Full compliance ratified.',
+    escalationLevel: 'LEVEL_0_NORMAL'
+  }
+];

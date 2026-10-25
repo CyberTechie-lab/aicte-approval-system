@@ -239,3 +239,4 @@ npm test
 > **REGULATORY SAFEGUARD NOTE (APH 2026-27):**  
 > In accordance with the AICTE Approval Process Handbook (APH 2026-27), automated workflow notifications, algorithmic compliance sweeps, and SLA escalation tracking are decision-support mechanisms to enforce statutory timelines. They shall **not supplant** the statutory appraisal, inspection, and quasi-judicial authority reserved for the Scrutiny Committee, Expert Visit Committee (EVC), Standing Appellate Committee (SAC), Standing Hearing Committee (SHC), and the sovereign determinations of the Executive Council under the All India Council for Technical Education Act, 1987.
 # aicte-approval-system
+# aicte-approval-system

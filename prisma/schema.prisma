@@ -1,0 +1,255 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                     String   @id @default(uuid())
+  email                  String   @unique
+  password               String?
+  name                   String
+  role                   String
+  designation            String
+  department             String
+  region                 String?
+  institutionPermanentId String?
+  institutionName        String?
+  avatarBg               String?
+  badgeBg                String?
+  description            String?
+  permissions            String   // JSON string
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model Institution {
+  permanentId           String   @id
+  name                  String
+  aliases               String   @default("[]") // JSON string
+  region                String
+  state                 String
+  city                  String
+  address               String
+  principalName         String
+  contactEmail          String
+  contactPhone          String
+  instituteType         String
+  currentApprovalStatus String
+  eoaAcademicYear       String   @default("2026-27")
+  complianceRating      Float    @default(4.0)
+  totalApprovedIntake   Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  applications          ApprovalApplication[]
+  undertakings          TimeBoundUndertaking[]
+  documents             DocumentValidity[]
+}
+
+model ApprovalApplication {
+  id                     String   @id @default(uuid())
+  applicationNumber      String   @unique
+  institutionPermanentId String
+  institutionName        String
+  region                 String
+  state                  String
+  city                   String
+  applicationType        String
+  academicYear           String   @default("2026-27")
+  appliedDate            DateTime @default(now())
+  route                  String   // Only Scrutiny | Scrutiny + EVC | EVC + SAC/SHC | Only EVC | Full APH Cycle
+  currentStage           String   // SCRUTINY | RE_SCRUTINY | EVC_SCHEDULED | EVC_COMPLETED | SAC_SHC_REVIEW | APPROVED | REVERTED_DEFICIENCY | REJECTED
+  priority               String   @default("MEDIUM")
+  escalationLevel        String   @default("LEVEL_0_NORMAL") // LEVEL_0_NORMAL | LEVEL_1_RO | LEVEL_2_BUREAU | LEVEL_3_MEMBER_SECRETARY
+  slaDeadline            DateTime
+  daysPending            Int      @default(0)
+  assignedOfficer        String
+  assignedCommittee      String?
+  appliedIntake          Int      @default(0)
+  totalApprovedIntake    Int      @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  institution            Institution            @relation(fields: [institutionPermanentId], references: [permanentId])
+  deficiencies           Deficiency[]
+  auditLogs              AuditLog[]
+  evcSchedules           EvcSchedule[]
+  undertakings           TimeBoundUndertaking[]
+}
+
+model Deficiency {
+  id                  String   @id @default(uuid())
+  applicationId       String
+  clause              String
+  description         String
+  category            String
+  cureDeadline        DateTime
+  status              String   // PENDING_CURE | CURED_PENDING_VERIFICATION | CURED_VERIFIED | EXPIRED_UNRESOLVED
+  institutionResponse String?
+  responseDocumentUrl String?
+  cureRemarks         String?
+  verifiedAt          DateTime?
+  verifiedBy          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  application         ApprovalApplication @relation(fields: [applicationId], references: [id])
+}
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  applicationId  String?
+  entityType     String?  // APPLICATION | UNDERTAKING | DOCUMENT | EVC | AUTH | CONFIG
+  entityId       String?
+  timestamp      DateTime @default(now())
+  actorName      String
+  actorRole      String
+  actionType     String   // STAGE_TRANSITION | DEFICIENCY_REVERT | DEFICIENCY_CURE_SUBMITTED | DEFICIENCY_CURE_VERIFIED | EVC_ORDERED | EVC_SCHEDULED | EVC_REPORT_SUBMITTED | EVC_REPORT_RATIFIED | UNDERTAKING_VERIFIED | UNDERTAKING_PROOF_SUBMITTED | UNDERTAKING_REJECTED | DOCUMENT_RENEWAL_SUBMITTED | DOCUMENT_RENEWAL_VERIFIED | DOCUMENT_RENEWAL_REJECTED | ALERT_GENERATED | ALERT_READ | NOTIFICATION_SENT | CONFIG_CHANGED | LOGIN | LOGOUT | CASE_CLOSED | ESCALATION_TRIGGERED
+  stageFrom      String?
+  stageTo        String?
+  title          String
+  remarks        String
+  authorizedBy   String?
+  ip             String?
+  userAgent      String?
+
+  application    ApprovalApplication? @relation(fields: [applicationId], references: [id])
+}
+
+model EvcSchedule {
+  id                    String   @id @default(uuid())
+  applicationId         String
+  applicationNumber     String
+  institutionPermanentId String
+  institutionName       String
+  region                String
+  inspectionType        String   // PHYSICAL_INSPECTION | SURPRISE_INSPECTION | VIRTUAL_VERIFICATION
+  status                String   // PENDING_SCHEDULING | PANEL_CONSTITUTED | VISIT_CONDUCTED | REPORT_SUBMITTED | REPORT_RATIFIED
+  scheduledDate         DateTime?
+  slaReportDeadline     DateTime
+  committeeMembersJson  String   // JSON of EvcMember[]
+  reportSubmittedDate   DateTime?
+  deficienciesFound     Boolean  @default(false)
+  deficiencySummary     String?
+  recommendedIntake     Int?
+  reportDocumentUrl     String?
+  escalationTriggered   Boolean  @default(false)
+  delayReason           String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  application           ApprovalApplication @relation(fields: [applicationId], references: [id])
+}
+
+model TimeBoundUndertaking {
+  id                     String   @id @default(uuid())
+  applicationId          String
+  applicationNumber      String
+  institutionPermanentId String
+  institutionName        String
+  region                 String
+  category               String   // INFRASTRUCTURE_UPGRADE | FACULTY_CADRE_RATIO | LAB_EQUIPMENT | ACCESSIBILITY_RPWD | ENDOWMENT_FUND
+  conditionTitle         String
+  prescribedCondition    String
+  imposedDate            DateTime @default(now())
+  dueDate                DateTime
+  status                 String   // PENDING_SUBMISSION | SUBMITTED_PENDING_VERIFICATION | VERIFIED_COMPLIANT | REJECTED_RESUBMIT | OVERDUE_ESCALATED
+  evidenceDocumentName   String?
+  evidenceDocumentUrl    String?
+  submittedAt            DateTime?
+  verifiedAt             DateTime?
+  verifiedBy             String?
+  verificationRemarks    String?
+  escalationLevel        String   @default("LEVEL_0_NORMAL")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  application            ApprovalApplication @relation(fields: [applicationId], references: [id])
+  institution            Institution         @relation(fields: [institutionPermanentId], references: [permanentId])
+}
+
+model DocumentValidity {
+  id                     String   @id @default(uuid())
+  institutionPermanentId String
+  institutionName        String
+  region                 String
+  documentType           String   // LAND_LEASE_DEED | FIRE_SAFETY_NOC | OCCUPANCY_CERTIFICATE | BUILDING_STABILITY | POLLUTION_CLEARANCE
+  documentNumber         String
+  issuingAuthority       String
+  issuedDate             DateTime
+  expiryDate             DateTime
+  status                 String   // ACTIVE_VALID | EXPIRING_SOON_90D | CRITICAL_30D | EXPIRED
+  documentUrl            String
+  renewalDocumentUrl     String?
+  renewalSubmittedDate   DateTime?
+  renewedExpiryDate      DateTime?
+  verifiedBy             String?
+  verifiedAt             DateTime?
+  verificationRemarks    String?
+  renewalStatus          String?  // PENDING | VERIFIED | REJECTED
+  escalationNoticeServed Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  institution            Institution         @relation(fields: [institutionPermanentId], references: [permanentId])
+}
+
+model AlertNotification {
+  id              String   @id @default(uuid())
+  dedupKey        String?  @unique
+  type            String   // SLA_WARNING | ESCALATION | EVC_DELAY | UNDERTAKING_OVERDUE | LEASE_EXPIRY | DEFICIENCY_CURE
+  severity        String   // LOW | MEDIUM | HIGH | CRITICAL
+  title           String
+  message         String
+  timestamp       DateTime @default(now())
+  relatedEntityId String
+  targetRole      String   // ALL | REGIONAL_OFFICER | BUREAU_OFFICER | SUPER_ADMIN | INSTITUTION_PRINCIPAL
+  region          String?
+  isRead          Boolean  @default(false)
+  actionUrl       String?
+}
+
+model AphConfig {
+  id                         String   @id @default("default")
+  scrutinyMaxDays            Int      @default(30)
+  reScrutinyMaxDays          Int      @default(15)
+  evcInspectionMaxDays       Int      @default(21)
+  evcReportUploadMaxDays     Int      @default(5)
+  sacAppellateMaxDays        Int      @default(15)
+  deficiencyCurePeriodDays   Int      @default(15)
+  undertakingGracePeriodDays Int      @default(30)
+  leaseAdvanceAlertDays      Int      @default(90)
+  escalationL1Days           Int      @default(7)
+  escalationL2Days           Int      @default(14)
+  slaWarningDays             Int      @default(3)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}
+
+model NotificationLog {
+  id             String   @id @default(uuid())
+  channel        String   // EMAIL | SMS
+  recipient      String
+  subject        String
+  body           String
+  status         String   // SENT | FAILED | MOCKED
+  sentAt         DateTime @default(now())
+  relatedAlertId String?
+}
+
+model UploadedFile {
+  id           String   @id @default(uuid())
+  originalName String
+  fileName     String
+  fileSize     Int
+  mimeType     String
+  sha256Hash   String
+  uploadedBy   String
+  entityType   String   // DEFICIENCY | UNDERTAKING | DOCUMENT | EVC
+  entityId     String
+  createdAt    DateTime @default(now())
+}
